@@ -1,0 +1,35 @@
+#+STARTUP: indent
+#+OPTIONS: toc:nil num:nil title:nil \n:t author:nil ::nil H:1 f:nil 
+
+* one
+* two
+** two_a
+an article for two_a
+** two_a 2
+<pre>
+| a | table | goes | here |
+|---+-------+------+------|
+| 1 |     2 |    3 |    6 |
+|---+-------+------+------|
+#+TBLFM: $4=vsum($1..$3)
+</pre>
+*** two_b [1/2]
+- [X] check1
+- [ ] check2
+**** two_c
+here's some code:
+<pre>
+//[[https://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm][source]] (iquilezles.org)
+float sdfbox(vec3 pos, vec3 size) {
+    pos = abs(pos)-size;
+    return length(max(pos, 0.0)) + min( max(pos.x, max(pos.y, pos.z)), 0.0);
+}
+</pre>
+*** two_b 2
+here's a pic:
+[[./this_is_my_pond.gif][this is my pond]]
+** two_a 3
+* three
+an article for three
+* four
+an article for four
