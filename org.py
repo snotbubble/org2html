@@ -1,4 +1,4 @@
-# henious brute-force 1st-attempt sript to convert an org file into something similar in html.
+# heinous brute-force 1st-attempt sript to convert an org file into something similar in html.
 # colors are based on emacs slate-gray bg and aurora color theme.
 # nothing is interactive besides folding... that's a job fore a real programmer.
 # there is no java/javascript in the output, external files are whatever is linked in the orgfile, and a couple of fonts.
