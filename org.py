@@ -1,18 +1,21 @@
-# henious brute-force 1st-attempt sript to convert an org file into something similar in html.
+# brute-force sript to convert an org file into something similar in html.
 # colors are based on emacs slate-gray bg and aurora color theme.
+# fonts should be readable at any res, depends on browser/device though. there's a bug in webkit that prevents it from being told not to override font size, so it may behave strangely on mobile
 # nothing is interactive besides folding... that's a job fore a real programmer.
 # there is no java/javascript in the output, external files are whatever is linked in the orgfile, and a couple of fonts.
 # written by cpbrown in 2020, with help form w3 help docs.
-
-pth = '/home/cpb/Documents/txt/'
+# <meta charset=utf-8> is needed for block characters from org-plot (chrome defaults to uft-16, which breaks it).
 
 import shutil
 import codecs
+import os
+import sys
 
-myorg = pth + 'cpbrown_notes.org'
-#myorg = pth + 'test.org'
+pth = os.path.split(os.path.realpath('org.py'))[0] + '/'
+myorg = pth + sys.argv[1]
 
 
+# the endless quest for the right font...
 fontheader = 'nk57-monospace-ex-eb' # great header font
 #fontarticle = 'range-mono-medium-webfont' #bit too serify and cramped, block char isn't mono
 #fontarticle = 'robotomono-m' #right proportions, clean style, but block char isn't mono :(
@@ -22,9 +25,9 @@ fontheader = 'nk57-monospace-ex-eb' # great header font
 fontarticle = 'cinecavd-mono' #works with headline style, no monospace issues, very wide tho
 
 headpart = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.1//EN">
+<meta charset=utf-8>
 <HTML>
 <head>
-<!-- Range-Mono font is licensed from monolithfoundry.com. -->
 <style type="text/css">
 	@font-face {
 		font-family: fhead;
@@ -42,7 +45,8 @@ headpart = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.1//EN">
 		background: #263238;
 	}
 	div {
-		font-size: clamp(5px,3.0vw,20px);
+		font-family: article;
+		font-size: clamp(5px,0.7vw,20px);
 		font-weight: 900;
 		text-decoration: none;
 		text-align: left;
@@ -60,6 +64,8 @@ headpart = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.1//EN">
 		font-weight: 700;
 		text-decoration: none;
 		white-space: pre-wrap;
+		-webkit-text-size-adjust: none;
+		text-size-adjust: none;
 	}
 	xmp {
 		font-family: article;
@@ -67,9 +73,11 @@ headpart = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.1//EN">
 		font-weight: 700;
 		text-decoration: none;
 		white-space: pre-wrap;
+		-webkit-text-size-adjust: none;
+		text-size-adjust: none;
 	}
 	.widetable {
-		font-size: clamp(5px,0.8vw,20px);
+		font-size: clamp(5px,0.7vw,20px);
 	}
 	a {
 		font-family: article;
@@ -153,10 +161,8 @@ linedepth = 0
 isaheader = False
 hassubs = False
 hasarticle = False
-followsblank = False
 followsarticle = False
 isanarticle = False
-isblankarticle = False
 beginrecord = False
 letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
 firstheader = True
@@ -185,8 +191,6 @@ for l in range(len(lines)) :
 			isanarticle = False
 			isaheader = False
 			pauserecord = linedepth
-			#print("found a noexport, pausing at depth: " + str(linedepth))
-		#print("comparing : " + str(pauserecord) + " : " + str(currentdepth) + " : " + lines[l].strip())
 		if pauserecord > currentdepth :
 			if l < (len(lines) - 1) and isaheader :
 				hassubs = getsubs(lines[(l+1):],linedepth+1)
@@ -194,7 +198,6 @@ for l in range(len(lines)) :
 				hasarticle = nextline[0]
 			followsarticle = False
 			if isaheader :
-				#currentdepth = linedepth
 				if l > 0 :
 					checkprevious = getother(lines[l-1])
 					followsarticle = checkprevious[0]
@@ -202,14 +205,13 @@ for l in range(len(lines)) :
 						followsparentheader = checkprevious[1] < linedepth
 						followssiblingheader = checkprevious[1] == linedepth
 						followschildheader = checkprevious[1] > linedepth
-			linestring = ""                
+			linestring = ""             
 			indent = ""
 			if isaheader and not firstheader  :
 				indent = ''.ljust((previousdepth)*4,' ')
 				if followsarticle : 
 					linestring = linestring + indent + '\t</TD></TR></TABLE>\n'
 				diffdepth = linedepth - previousdepth
-				#print(str(linedepth) + " : " + str(previousdepth) + " : " + str(hassubs) + " : "  + lines[l])
 				if diffdepth < 0  :
 					for x in range(abs(diffdepth)+1) :
 						indent = ''.ljust(((previousdepth - x)*4),' ')
@@ -290,7 +292,6 @@ for l in range(len(lines)) :
 				previousdepth = linedepth
 linestring = ""
 diffdepth = 0 - previousdepth
-#print(str(linedepth) + " : " + str(previousdepth) + " : " + str(hassubs) + " : "  + lines[l])
 if getother(lines[len(lines)-1])[0] :
 	indent = ''.ljust(((previousdepth)*4),' ')
 	linestring = linestring + indent + '\t</TD></TR></TABLE>\n'
