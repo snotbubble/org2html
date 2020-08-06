@@ -1,10 +1,17 @@
+# work in progress, still contains test-site info
+
 # brute-force sript to convert an org file into something similar in html.
 # colors are based on emacs slate-gray bg and aurora color theme.
-# fonts should be readable at any res, depends on browser/device though. there's a bug in webkit that prevents it from being told not to override font size, so it may behave strangely on mobile
+# fonts should be readable at any res, depends on browser/device though.
 # nothing is interactive besides folding... that's a job fore a real programmer.
 # there is no java/javascript in the output, external files are whatever is linked in the orgfile, and a couple of fonts.
 # written by cpbrown in 2020, with help form w3 help docs.
 # <meta charset=utf-8> is needed for block characters from org-plot (chrome defaults to uft-16, which breaks it).
+
+# TODO: grab title, subtitle, author and date from orgfile, add to top of document
+# TODO: make headline and article fonts optional args
+# TODO: copy all linked files to /pub, not just fonts
+# TODO: delete everything in /pub before copying stuff over
 
 import shutil
 import codecs
