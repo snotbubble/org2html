@@ -24,6 +24,7 @@ script is a rough draft, still contains site-specific settings and fixed fonts.
 - [X] fix org-table rendering issues on mobile & chrome
 - [X] supply org file as an arg
 - [X] grab title info from org file
+- [X] allow org blocks inside xmp blocks
 - [ ] make pub dir if it doesn't exist
 - [ ] harvest all linked files, copy to pub
 - [ ] clear pub before copying files to it, with confirmation
