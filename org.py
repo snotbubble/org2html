@@ -8,7 +8,6 @@
 # written by cpbrown in 2020, with help form w3 help docs.
 # <meta charset=utf-8> is needed for block characters from org-plot (chrome defaults to uft-16, which breaks it).
 
-# TODO: grab title, subtitle, author and date from orgfile, add to top of document
 # TODO: make headline and article fonts optional args
 # TODO: copy all linked files to /pub, not just fonts
 # TODO: delete everything in /pub before copying stuff over
