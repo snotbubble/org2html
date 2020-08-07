@@ -17,6 +17,7 @@ import shutil
 import codecs
 import os
 import sys
+from datetime import datetime
 
 pth = os.path.split(os.path.realpath('org.py'))[0] + '/'
 myorg = pth + sys.argv[1]
@@ -120,9 +121,6 @@ headpart = """<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.1//EN">
 </head>
 <body>
 <div style="width: 95vw; align: left; margin-left: 0px;">
-<div class="x"># reference notes. c.p.brown 2020</div>
-<div class="xs"><i># information on this site is fictional</i></div>
-<BR>
 """
 import codecs
 with codecs.open(myorg, encoding='utf-8') as f:
@@ -164,7 +162,7 @@ def getother(line) :
 	o[0] = d == -1
 	return o                      
 
-linedepth = 0
+linedepth = -99
 isaheader = False
 hassubs = False
 hasarticle = False
@@ -176,17 +174,43 @@ firstheader = True
 currentdepth = 0
 previousdepth = 0
 amverbatim = False
+amblock = False
 nextline = [False,-1]
 pauserecord = 99
+orgtitle = ""
+orgauthndate = ""
+orgsubtitle = ""
 
 for l in range(len(lines)) :
 	linedepth = getdepth(lines[l]) - 1
+	if not beginrecord :
+		if "#+TITLE" in lines[l] :
+			parts = lines[l].strip().split(':')
+			if len(parts) > 1 : orgtitle = parts[1]
+		if "#+AUTHOR :" in lines[l] and orgtitle != "" : 
+			parts = lines[l].strip().split(':')
+			nw = datetime.today()
+			dord = nw.toordinal()
+			# add a whiggle, because English... 
+			# this clever oneliner posted by 'Frosty Snowman' here: https://stackoverflow.com/questions/3644417/python-format-datetime-with-st-nd-rd-th-english-ordinal-suffix-like
+			whiggle = ("th" if 4<=dord%100<=20 else {1:"st",2:"nd",3:"rd"}.get(dord%10, "th"))
+			# assemble title as title. author. month dayth year
+			if len(parts) > 1 : orgauthndate = ". " + parts[1] + ". " + datetime.strftime(nw,"%B %-d") + whiggle + " " + datetime.strftime(nw,"%Y")
+		if "#+SUBTITLE :" in lines[l] : 
+			parts = lines[l].strip().split(':')
+			if len(parts) > 1 : orgsubtitle = parts[1]
+		if orgtitle != "" and orgauthndate != "" :
+			orghtml = orghtml + '<div class="x"># ' + orgtitle + orgauthndate + '</div>\n'
+			orgtitle = ""; orgauthndate = ""
+		if orgsubtitle != "" : 
+			orghtml = orghtml + '<div class="xs"><i># ' + orgsubtitle + '</i></div>\n<BR><BR>\n'
+			orgsubtitle = ""
+		beginrecord = linedepth >= 0
 	isaheader = linedepth >= 0
 	if isaheader : 
 		currentdepth = linedepth
 		if pauserecord >= linedepth :
 			pauserecord = 99
-	if not beginrecord : beginrecord = linedepth >= 0
 	if beginrecord :
 		hassubs = False
 		hasarticle = False
@@ -244,10 +268,10 @@ for l in range(len(lines)) :
 				if checktag == '</pre>' : amverbatim = False
 				if checktag == '</xmp>' : amverbatim = False
 				checkblock = lines[l].strip().lower()
-				if '#+begin_src ' in checkblock : amverbatim = True; xmpme = True
-				if '#+begin_example' in checkblock : amverbatim = True; xmpme = True
-				if '#+end_src' in checkblock : amverbatim = False; capxmp = True
-				if '#+end_example' in checkblock : amverbatim = False; capxmp = True
+				if '#+begin_src ' in checkblock and amverbatim == False: amverbatim = True; amblock = True; xmpme = True
+				if '#+begin_example' in checkblock and amverbatim == False : amverbatim = True; amblock = True; xmpme = True
+				if '#+end_src' in checkblock and amblock == True : amverbatim = False; amblock = False; capxmp = True
+				if '#+end_example' in checkblock  and amblock == True : amverbatim = False; amblock = False; capxmp = True
 				indent = ''.ljust((currentdepth)*8,' ')
 				nwl = '<BR>\n'
 				if amverbatim : nwl = '\n'
