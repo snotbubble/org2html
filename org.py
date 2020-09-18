@@ -189,7 +189,7 @@ for l in range(len(lines)) :
 		if "#+AUTHOR :" in lines[l] and orgtitle != "" : 
 			parts = lines[l].strip().split(':')
 			nw = datetime.today()
-			dord = nw.toordinal()
+			dord = nw.day
 			# add a whiggle, because English... 
 			# this clever oneliner posted by 'Frosty Snowman' here: https://stackoverflow.com/questions/3644417/python-format-datetime-with-st-nd-rd-th-english-ordinal-suffix-like
 			whiggle = ("th" if 4<=dord%100<=20 else {1:"st",2:"nd",3:"rd"}.get(dord%10, "th"))
