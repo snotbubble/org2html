@@ -35,6 +35,7 @@ script is a rough draft, still contains site-specific settings and fixed fonts.
 - [ ] (maybe) headline todo and priority formatting (ransack emacs config)
 - [ ] (maybe) tag display, filter by tags
 - [ ] (maybe) clickable dates to show timeline in split screen
+- [ ] hose it all and re-write as a red or rebol3 executable
 
 # screenie
 
